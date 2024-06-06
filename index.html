@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>MDIA 2294</title>
+	
+	<style>
+	    thead{
+	        font-weight:bold;
+	    }
+	    
+	    td{
+	        padding-left:5px;
+	        padding-right:5px;	        
+	    }
+	    
+	    td.sub-total{
+	        text-align:right;	        
+	    }
+	</style>
+</head>
+<body>
+	<h1>MDIA 2294: ACME Corp Invoice</h1>
+	
+	<table>
+	    <thead>
+	        <tr>
+	            <td>ITEM</td>
+	            <td>DESCRIPTION</td>
+	            <td>QTY</td>
+	            <td>PRICE</td>
+	            <td>LINE TOTAL</td>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <tr>
+	            <td>1</td>
+	            <td><input id="line-1-description" type="text" size="40" value="Anvil" /></td>
+	            <td><input id="line-1-quantity" type="text" size="3" value="5" /></td>
+	            <td><input id="line-1-price" type="text" size="6" value="35.00" /></td>
+	            <td class="sub-total"><span id="line-1"></span></td>
+	        </tr>
+	        <tr>
+	            <td>2</td>
+	            <td><input id="line-2-description" type="text" size="40" value="Rocket Skates (each)" /></td>
+	            <td><input id="line-2-quantity" type="text" size="3" value="2" /></td>
+	            <td><input id="line-2-price" type="text" size="6" value="24.99" /></td>
+	            <td class="sub-total"><span id="line-2"></span></td>
+	        </tr>
+	        <tr>
+	            <td>3</td>
+	            <td><input id="line-3-description" type="text" size="40" value="Giant Magnet" /></td>
+	            <td><input id="line-3-quantity" type="text" size="3" value="1" /></td>
+	            <td><input id="line-3-price" type="text" size="6" value="125.50" /></td>
+	            <td class="sub-total"><span id="line-3"></span></td>
+	        </tr>
+	        <tr>
+	            <td>4</td>
+	            <td><input id="line-4-description" type="text" size="40" value="Ball bearings" /></td>
+	            <td><input id="line-4-quantity" type="text" size="3" value="1000" /></td>
+	            <td><input id="line-4-price" type="text" size="6" value="0.25" /></td>
+	            <td class="sub-total"><span id="line-4"></span></td>
+	        </tr>
+	        <tr>
+	            <td>5</td>
+	            <td><input id="line-5-description" type="text" size="40" value="Portable holes" /></td>
+	            <td><input id="line-5-quantity" type="text" size="3" value="12" /></td>
+	            <td><input id="line-5-price" type="text" size="6" value="15.25" /></td>
+	            <td class="sub-total"><span id="line-5"></span></td>
+	        </tr>
+	    </tbody>
+	    <tfoot>
+	        <tr>
+	            <td colspan="4" style="text-align:right;">SUB TOTAL</td>  
+	            <td class="sub-total"><span id="sub-total"></span></td>	        
+	        </tr>
+	        <tr>
+	            <td colspan="4" style="text-align:right;">DISCOUNT</td>  
+	            <td class="sub-total"><span id="discount"></span></td>	        
+	        </tr>
+	        <tr>
+	            <td colspan="4" style="text-align:right;">TAX</td>  
+	            <td class="sub-total"><span id="tax"></span></td>	        
+	        </tr>
+	        <tr>
+	            <td colspan="4" style="text-align:right;">TOTAL</td>  
+	            <td class="sub-total" style="border-top:solid black 1px"><span id="Total"></span></td>	        
+	        </tr>
+	    </tfoot>	    
+	</table>
+	
+	<div><button id="calculate">Calculate</button></div>
+	<div>NOTE: discounts of 10% are given to orders over $250</div>
+
+	<script>
+	    function calculate() {    
+        // Retrieve the quantities & price for each line
+        let quantities = [
+            parseInt(document.getElementById("line-1-quantity").value),
+            parseInt(document.getElementById("line-2-quantity").value),
+            parseInt(document.getElementById("line-3-quantity").value),
+            parseInt(document.getElementById("line-4-quantity").value),
+            parseInt(document.getElementById("line-5-quantity").value)
+        ];
+
+        let prices = [
+            parseFloat(document.getElementById("line-1-price").value),
+            parseFloat(document.getElementById("line-2-price").value),
+            parseFloat(document.getElementById("line-3-price").value),
+            parseFloat(document.getElementById("line-4-price").value),
+            parseFloat(document.getElementById("line-5-price").value)
+        ];
+
+        // Calculate the total for each line
+        let lineTotals = [];
+        for (let i = 0; i < 5; i++) {
+		// Calculate the total for each line item
+            let lineTotal = quantities[i] * prices[i];
+            lineTotals.push(lineTotal);
+		 // Update the line total element in the table	
+            document.getElementById(`line-${i + 1}`).innerText = `$${lineTotal.toFixed(2)}`;
+        }
+
+        // Keep a running total for all lines
+        let subTotal = 0;
+        for (let i = 0; i < 5; i++) {
+			 // Add each line total to the sub-total
+            subTotal += lineTotals[i];
+        }
+		// Update the sub-total element in the table
+        document.getElementById("sub-total").innerText = `$${subTotal.toFixed(2)}`;
+
+        // Calculate if the discount should be applied
+        let discount = 0;
+        if (subTotal > 250) {
+			// Apply a 10% discount if the sub-total is greater than $250
+            discount = subTotal * 0.1;
+        }
+		// Update the discount element in the table
+        document.getElementById("discount").innerText = `$${discount.toFixed(2)}`;
+
+        // Calculate the tax on the sub-total
+        let tax = subTotal * 0.12;
+		// Update the tax element in the table
+        document.getElementById("tax").innerText = `$${tax.toFixed(2)}`;
+
+        // Calculate the total
+        let total = subTotal - discount+tax;
+		// Update the total element in the table
+        document.getElementById("Total").innerText = `$${total.toFixed(2)}`;
+    }
+
+    // Add an event listener to the calculate button
+    document.getElementById("calculate").addEventListener("click", calculate);
+	//Student name: Mahdieh Mehrnejad // Student ID:A01305907 // Assignment 1 (Invoice Calculator)
+</script>
+</body>
+</html>
